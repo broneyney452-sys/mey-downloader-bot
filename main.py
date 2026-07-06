@@ -7,10 +7,14 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import yt_dlp
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import threading
+from static_ffmpeg import run
+
+# បញ្ជាឱ្យប្រព័ន្ធទាញយក និងកំណត់ទីតាំង FFmpeg ស្វ័យប្រវត្តលើ Cloud
+ffmpeg_path, ffprobe_path = run.get_or_fetch_platform_executables_and_set_env()
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# លេខ Token ថ្មីចុងក្រោយបង្អស់របស់បង
+# លេខ Token របស់បង
 BOT_TOKEN = "80904144736:AAFxXkbfY1vUkJQ710SfelvxLrp5Th-vkEA"
 
 class HealthCheckHandler(BaseHTTPRequestHandler):
@@ -47,7 +51,7 @@ async def download_and_send_video(update: Update, context: ContextTypes.DEFAULT_
     if not os.path.exists(download_dir): os.makedirs(download_dir)
 
     ydl_opts = {
-        'format': 'best',
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'outtmpl': f'{download_dir}/%(id)s.%(ext)s',
         'noplaylist': True, 
         'quiet': True,
@@ -96,4 +100,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-  
